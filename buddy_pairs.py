@@ -29,27 +29,31 @@ for C: The returned string will be free'd.
 See more examples in "Sample Tests:" of your language.
 """
 
+# this is a iterative form to find all of the divisors on n
+# in this calculation of sum - we ignore having the one. This helps to direct compare the sums
+# instead of making -1, +1 adjustments to it
 def sum_divisors(n):
-    i = 1
-    res = 0
-    while i <= n/2:
+    res = set()
+    # ignore vaalue one
+    for i in range (2, int(n**0.5) + 1):
         if n % i == 0:
-            res += i
+            res.add(i)
+            res.add(n/i)
         i += 1
-    return res
+    return sum(res)
 
 def buddy(start, limit):
     res = []
     while start <= limit:
+        # find the sum of the divisors of the testing value
         x = sum_divisors(start)
-        if x > limit:
-            x -= 1
-            if sum_divisors(x) - 1 == start:
-                res = [start, x]
-                break
+        if x > start and sum_divisors(x) == start:
+            res = [start, x]
+            break
         start += 1
     return res if res else "Nothing"
 
+
+
 x = buddy(57345, 90061)
-#x = sum_divisors(62744)
 print(x)
