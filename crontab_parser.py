@@ -57,13 +57,37 @@ Super handy resource for playing with different values to find their outputs: ht
 
 import re
 
-D = {}
+D = {
+'minute': {"start": 0, "end": 59},
+'hour': {"start": 0, "end": 23},
+'day of month': {"start": 1, "end": 31},
+'month': {"start": 1, "end": 12},
+'day of week': {"start": 0, "end": 6} }
 
-D['minute'] = {"start": 0, "end": 59}
-D['hour'] = {"start": 0, "end": 23}
-D['day of month'] = {"start": 1, "end": 31}
-D['month'] = {"start": 1, "end": 12}
-D['day of week'] = {"start": 0, "end": 6}
+M = {
+"JAN": 1,
+"FEB": 2,
+"MAR": 3,
+"APR": 4,
+"MAY": 5,
+"JUN": 6,
+"JUL": 7,
+"AUG": 8,
+"SEP": 9,
+"OCT": 10,
+"NOV": 11,
+"DEC": 12 
+}
+
+d = {
+"SUN": 0,
+"MON": 1,
+"TUE": 2,
+"WED": 3,
+"THU": 4,
+"FRI": 5,
+"SAT": 6 
+}
 
 class Solution:
     def range_parse(self, ran, st):
@@ -72,7 +96,7 @@ class Solution:
         R = [int(i) for i in ran.split('-')]
         for i in range(R[0], R[1]+1, int(st)):
             self.ans += str(i) + ' '
-        return self.ans.lstrip(' ')
+        return self.ans.strip(' ')
 
     def ast_slash_parse(self, s, type):
         # change something like */2 for month to 1 3 5 7 9 11
@@ -80,7 +104,7 @@ class Solution:
         st = int(s.split('/')[1])
         for i in range(D[type]['start'], D[type]['end']+1, st):
             self.ans += str(i) + ' '
-        return self.ans.lstrip(' ')
+        return self.ans.strip(' ')
     
     def comma_parse(self, value):
         # in this you only split things by a comma:
@@ -100,30 +124,53 @@ class Solution:
         info = crontab.split()
         
         for i, entry in enumerate(info):
+            # if entry value is a "*"
             if entry == "*":
                 entry = ' '.join(map(str, range(D[T[i]]['start'], D[T[i]]['end'] + 1)))
-                #print(out + ANS)
 
-            if re.search(r',', entry):
+
+            # replace the month being in charachter (JAN-DEC/2) to 1-12/2:
+            if re.search(r'([A-Z]{3}-[A-Z]{3})(/\d+){0,1}', entry) and i in [3, 4]:
+                # replace the months
+                S = re.search(r'([A-Z]{3})-([A-Z]{3})', entry)
+                if i == 3: # replace for months
+                    repl = "%s-%s" % (str(M[S.group(1)]), str(M[S.group(2)]))
+                elif i == 4: # replace for days
+                    repl = "%s-%s" % (str(d[S.group(1)]), str(d[S.group(2)]))
+                entry = re.sub("%s" % S.group(0), repl, entry)
+
+
+            # if entry value contains ","
+            while re.search(r',', entry):
                 entry = Solution.comma_parse(self, entry)
-            
-            if re.search(r'\*/(\d+)', entry):
-                S = re.search(r'\*/(\d)', entry)
+
+
+            # if entry value contains pattern of "*/num"
+            while re.search(r'\*/(\d+)', entry):
+                S = re.search(r'\*/(\d+)', entry)
                 repl = Solution.ast_slash_parse(self, S.group(0), T[i])
-                entry = re.sub(r'%s' % S.group(0), r'%s' % repl, entry)
-            print(entry)
+                entry = re.sub(r"\%s" % S.group(0), repl, entry)
+            
+
+            # if entry has pattern of range 5-10
+            while re.search(r'(\d+-\d+)(/\d+){0,1}', entry):
+                S = re.search(r'(\d+-\d+)(/\d+){0,1}', entry)
+                ran = S.group(1)
+                if not S.group(2):
+                    st = 1
+                else:
+                    st = int(S.group(2).lstrip('/'))
+                repl = Solution.range_parse(self, ran, st)
+                entry = re.sub("%s" % S.group(0), repl, entry)
 
 
-            #out = "%s" % T[i].ljust(15, ' ')
-
+            # sort the entry output
+            E = map(int, entry.split(' '))
+            E.sort()
+            entry = " ".join(map(str, E))
+            ind = "%s" % T[i] + ' ' * (15 - len(T[i]))
+            print("%s%s" % (ind, entry))
 
 
 S = Solution()
-#x = S.range_parse("1-10", "2")
-#print(x)
-
-#y = S.comma_parse("*/15,3-5")
-#print(y)
-#print(D)
-
-S.parse('* * */5 * *')
+S.parse('*/15 0 1,15 JAN-DEC/2 *')
