@@ -171,6 +171,6 @@ class Solution:
             ind = "%s" % T[i] + ' ' * (15 - len(T[i]))
             print("%s%s" % (ind, entry))
 
-
-S = Solution()
-S.parse('*/15 0 1,15 JAN-DEC/2 *')
+if __name__ == "__main__":
+    S = Solution()
+    S.parse('*/15 0 1,15 JAN-DEC/2 *')
