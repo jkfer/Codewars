@@ -1,4 +1,4 @@
-"""
+'''
 4kyu
 ----
 "7777...8?!??!", exclaimed Bob, "I missed it again! Argh!" Every time there's an interesting number coming up, he notices and then promptly forgets. Who doesn't like catching those one-off interesting mileage numbers?
@@ -14,12 +14,12 @@ Interesting numbers are 3-or-more digit numbers that meet one or more of the fol
 
 Any digit followed by all zeros: 100, 90000
 Every digit is the same number: 1111
-The digits are sequential, incementing†: 1234
-The digits are sequential, decrementing‡: 4321
+The digits are sequential, incementing: 1234
+The digits are sequential, decrementing: 4321
 The digits are a palindrome: 1221 or 73837
 The digits match one of the values in the awesome_phrases array
-† For incrementing sequences, 0 should come after 9, and not before 1, as in 7890.
-‡ For decrementing sequences, 0 should come after 1, and not before 9, as in 3210.
+For incrementing sequences, 0 should come after 9, and not before 1, as in 7890.
+For decrementing sequences, 0 should come after 1, and not before 9, as in 3210.
 
 So, you should expect these inputs and outputs:
 
@@ -43,38 +43,49 @@ A number is only interesting if it is greater than 99!
 Input will always be an integer greater than 0, and less than 1,000,000,000.
 The awesomePhrases array will always be provided, and will always be an array, but may be empty. (Not everyone thinks numbers spell funny words...)
 You should only ever output 0, 1, or 2.
-"""
+'''
 import re
 
+
 def is_int1(N):
-    if re.match(r'^[1-9]0+$', N):
-        return True
-    else:
-        return False
+    return True if re.match(r'^[1-9]0+$', N) else False
+
 
 def is_int2(N):
-    if re.match(r'^[1-9]{3,}$', N):
-        return True
-    else:
-        return False
+    return True if re.match(r'^(\d)\1+$', N) else False
+
 
 def is_int3(N):
     K = "".join(map(str, range(int(N[0]), int(N[-1]) + 1)))
     K_rev = "".join(map(str, range(int(N[-1]), int(N[0])+1)))
-    if N == K or N == K_rev:
+    
+    return True if N == K or N == K_rev else False
+
+
+def is_int4(N):
+    return True if N == N[::-1] else False
+
+# check if the number is in a incrementing or decrementing seq
+def is_incr_decr(N):
+    # get end values:
+    en = int(N[-1])
+    # check if the numbers leading upto it are incre
+    # get start and one before last dig: and turn them to a list
+    if (en == 0) and (N[:-1] in "123456789"):
+        return True if N[-2] == "9" else False
+    # check if the numbers leading upto it are decre
+    elif (en == 0) and (N[:-1] in "987654321"):
+        return True if N[-2] == "1" else False
+    # non-zero involved decrements
+    elif (N in "123456789") or (N in "987654321"):
         return True
     else:
         return False
 
-def is_int4(N):
-    if N == N[::-1]:
-        return True
-    else:
-        return False
 
 def check(N, num, awesome_phrases):
     if len(N) >= 3:
-        if any([is_int1(N), is_int2(N), is_int3(N), is_int4(N)]) or N in awesome_phrases:
+        if any([is_int1(N), is_int2(N), is_int3(N), is_int4(N), is_incr_decr(N)]) or int(N) in awesome_phrases:
             return num
         else:
             return 0
@@ -83,9 +94,17 @@ def check(N, num, awesome_phrases):
 
 def is_interesting(number, awesome_phrases):
     N = str(number)
-    A = check(N, 1, awesome_phrases)
-    if A == 0:
-        B = check(N, 1)
-
+    N_plus_1 = str(number+1)
+    N_plus_2 = str(number+2)
     
+    A = check(N, 2, awesome_phrases) 
+    B = check(N_plus_1, 1, awesome_phrases)
+    C = check(N_plus_2, 1, awesome_phrases)
 
+    if A == 2:
+        return A
+    else:
+        return B if B == 1 else C
+
+x = is_interesting(3236, [1337, 256])
+print(x)
