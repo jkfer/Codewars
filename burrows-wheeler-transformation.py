@@ -26,17 +26,6 @@ r b a n a n a b a
 
 Output: ("nnbbraaaa", 4)
 
-a n
-a n
-a b
-a b
-b r
-b a
-n a
-n a
-r a
-
-
 """
 def encode(s):
     res = []
@@ -47,7 +36,15 @@ def encode(s):
     S = "".join([k[-1] for k in res])
     print(S, res.index(s))
 
+
 def decode(s, n):
-    pass
+    out, lst = [], sorted((c,i) for i,c in enumerate(s))
+    # lst first nth element, index i will transfer to be the next n
+    for _ in range(len(s)):
+        c,n = lst[n]
+        out.append(c)
+    print(''.join(out))
+
 
 encode('bananabar')
+decode('nnbbraaaa', 4)
