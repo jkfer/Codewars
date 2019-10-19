@@ -18,9 +18,6 @@ test data only employs positive integers.
 
 """
 
-# this is incorrect - Try recursive approach for this.
-
-
 def next_smaller(n):
     # base:
     if len(str(n)) == 1:
