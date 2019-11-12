@@ -35,7 +35,7 @@ The pattern here is that
 for 1, you add the ways of making 0
 for 2, you add the ways of making, ways(0), ways(1)
 for 3, you add the ways of making, ways(1) + ways(2)
-for 5, you add the ways of making, ways(1) + ways(4) (for 4, you use ways(1), ways(3) for three ways(1), ways(2))
+for 5, you add the ways of making, ways(1) + ways(4) (for 4, you use ways(1), ways(3)....
 for 10 you add the ways of making ways(1), ways(9)
 """
 
