@@ -55,7 +55,7 @@ def get_box(r, c, puzzle):
         else:
             R = [6, 7, 8]
         return R
-    
+
     for R in get_ran(r):
         for C in get_ran(c):
             if puzzle[R][C] != 0:
@@ -67,16 +67,18 @@ def get_box(r, c, puzzle):
 def get_row(r, puzzle):
     return puzzle[r]
 
+
 def get_col(c, puzzle):
     return [puzzle[i][c] for i in range(9)]
+
 
 # traverse the puzzle and fill the possib dict for each position
 def create_possibl(puzzle):
     # create array for the possibilities of numbers:
     points = [[i, j] for i in range(9) for j in range(9)]
-    
+
     D = {}
-    
+
     for point in points:
         r, c = point
         # Row:
@@ -87,12 +89,12 @@ def create_possibl(puzzle):
             R = puzzle[r]
             C = [puzzle[i][c] for i in range(9)]
             B = get_box(r, c, puzzle)
-            
+
             all = R + C + B
             # remove the 0s in here
             while 0 in all:
                 all.remove(0)
-            
+
             D[(r, c)] = 9 - len(set(all))
     return D
 
@@ -106,7 +108,7 @@ def fill_puzz(puzzle, D):
             rem = list(set(actual).difference(S))[0]
             # update the puzzle
             puzzle[r][c] = rem
-    
+
     D = create_possibl(puzzle)
     if 1 in D.values():
         return fill_puzz(puzzle, D)
@@ -117,14 +119,14 @@ def fill_puzz(puzzle, D):
 if __name__ == "__main__":
     # Ex:
     puzzle = [[5,3,0,0,7,0,0,0,0],
-              [6,0,0,1,9,5,0,0,0],
-              [0,9,8,0,0,0,0,6,0],
-              [8,0,0,0,6,0,0,0,3],
-              [4,0,0,8,0,3,0,0,1],
-              [7,0,0,0,2,0,0,0,6],
-              [0,6,0,0,0,0,2,8,0],
-              [0,0,0,4,1,9,0,0,5],
-              [0,0,0,0,8,0,0,7,9]]
+          [6,0,0,1,9,5,0,0,0],
+          [0,9,8,0,0,0,0,6,0],
+          [8,0,0,0,6,0,0,0,3],
+          [4,0,0,8,0,3,0,0,1],
+          [7,0,0,0,2,0,0,0,6],
+          [0,6,0,0,0,0,2,8,0],
+          [0,0,0,4,1,9,0,0,5],
+          [0,0,0,0,8,0,0,7,9]]
 
     D = create_possibl(puzzle)
     ans = fill_puzz(puzzle, D)
